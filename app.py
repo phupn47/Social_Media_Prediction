@@ -2,9 +2,12 @@ from flask import Flask, render_template, request
 import pandas as pd
 import joblib
 import numpy as np
+import os
 
 app = Flask(__name__, template_folder="templates")
-model = joblib.load("favorite_app_model.joblib")
+
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "favorite_app_model.joblib")
+model = joblib.load(MODEL_PATH)
 
 JOBS = [
     "นักเรียน / นักศึกษา",
@@ -104,4 +107,4 @@ def predict():
     )
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
