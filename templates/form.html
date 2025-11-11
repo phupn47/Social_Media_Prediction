@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ทำนาย Social Media ที่ชื่นชอบ</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Sarabun", sans-serif;
+        background: #667eea;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+      }
+      h1 {
+        text-align: center;
+        color: #667eea;
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+      }
+      .grid {
+        display: grid;
+        gap: 20px;
+      }
+      fieldset {
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 24px;
+        margin: 20px 0;
+        background: #fafafa;
+      }
+      legend {
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: #333;
+        padding: 0 12px;
+      }
+      label {
+        display: block;
+        font-weight: 500;
+        margin: 16px 0 8px;
+        color: #333;
+        font-size: 1rem;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-family: "Sarabun", sans-serif;
+        background: white;
+      }
+      input.error,
+      select.error {
+        border-color: #e53e3e;
+      }
+      .row {
+        margin: 12px 0;
+      }
+      .checkbox-row {
+        display: flex;
+        align-items: center;
+        margin: 8px 0;
+        padding: 8px;
+        border-radius: 8px;
+      }
+      .checkbox-row input[type="checkbox"] {
+        width: auto;
+        margin-right: 12px;
+      }
+      .checkbox-row label {
+        margin: 0;
+        cursor: pointer;
+        flex: 1;
+      }
+      .btn {
+        width: 100%;
+        padding: 16px 24px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        font-family: "Sarabun", sans-serif;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+      }
+      .result {
+        background: #48bb78;
+        color: white;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+      .result strong {
+        font-weight: 600;
+      }
+      .cols-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 8px;
+      }
+      .alert {
+        background: #fed7d7;
+        border: 2px solid #fc8181;
+        color: #c53030;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin: 16px 0;
+        font-weight: 500;
+        display: none;
+      }
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+          margin: 10px;
+        }
+        h1 {
+          font-size: 2rem;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>ทำนาย Social Media ที่ชื่นชอบ</h1>
+
+      <div id="alert" class="alert">กรุณาเลือกเหตุผลในการใช้งาน !</div>
+
+      {% if result %}
+      <div class="result">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+          "
+        >
+          <strong>คุณชื่นชอบ {{ result.yhat }} มากที่สุด</strong>
+          <button
+            onclick="window.location.href='/'"
+            style="
+              background: rgba(255, 255, 255, 0.2);
+              border: 2px solid white;
+              color: white;
+              padding: 8px 12px;
+              border-radius: 8px;
+              cursor: pointer;
+              font-size: 16px;
+              font-weight: bold;
+            "
+          >
+            ✕
+          </button>
+        </div>
+        {% if result.top3 %}
+        <div>
+          <strong>ความมั่นใจ (3 อันดับแรก) :</strong>
+          <ul>
+            {% for c, p in result.top3 %}
+            <li>{{ c }} - {{ "%.2f"|format(p) }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <form method="post" action="/predict" id="predictionForm">
+        <fieldset>
+          <legend>ข้อมูลผู้ใช้งาน</legend>
+          <div class="grid">
+            <div>
+              <label>อายุ <strong style="color: #c53030">*</strong></label>
+              <input
+                type="number"
+                name="Age"
+                min="0"
+                max="100"
+                value="{{ result.echo.Age if result else '25' }}"
+                required
+              />
+            </div>
+            <div>
+              <label>เพศ <strong style="color: #c53030">*</strong></label>
+              <select name="Gender" required>
+                <option value="">-</option>
+                {% for g in ["ชาย","หญิง","ไม่ระบุ"] %}
+                <option value="{{g}}" {% if result and result.echo.Gender==g %}selected{% endif %}>{{g}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label>อาชีพ <strong style="color: #c53030">*</strong></label>
+              <select name="Jobs" required>
+                <option value="">-</option>
+                {% for j in jobs %}
+                <option value="{{j}}" {% if result and result.echo.Jobs==j %}selected{% endif %}>{{j}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label
+                >ระยะเวลาการใช้งานต่อวัน
+                <strong style="color: #c53030">*</strong></label
+              >
+              <select name="DailyUsageHours" required>
+                <option value="">-</option>
+                {% for h in hours %}
+                <option value="{{h}}" {% if result and result.echo.DailyUsageHours==h %}selected{% endif %}>{{h}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label
+                >ช่วงเวลาในการใช้งานบ่อยที่สุด
+                <strong style="color: #c53030">*</strong></label
+              >
+              <select name="ActiveTimeClean" required>
+                <option value="">-</option>
+                {% for a in active %}
+                <option value="{{a}}" {% if result and result.echo.ActiveTimeClean==a %}selected{% endif %}>{{a}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label
+                >ใช้งานมานานแค่ไหนแล้ว
+                <strong style="color: #c53030">*</strong></label
+              >
+              <select name="UsageYears" required>
+                <option value="">-</option>
+                {% for y in years %}
+                <option value="{{y}}" {% if result and result.echo.UsageYears==y %}selected{% endif %}>{{y}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>ข้อมูลการใช้งาน</legend>
+
+          <label
+            >ใช้งาน Social Media ในด้านใด (เลือกได้หลายข้อ)
+            <strong style="color: #c53030">*</strong></label
+          >
+          <div class="cols-2">
+            {% for r in smr_choices %}
+            <div class="checkbox-row">
+              <input
+                type="checkbox"
+                id="smr_{{loop.index}}"
+                name="SocialMediaReason"
+                value="{{r}}"
+                {% if result and result.echo.SocialMediaReason and r in result.echo.SocialMediaReason %}checked{% endif %}
+              />
+              <label for="smr_{{loop.index}}">{{r}}</label>
+            </div>
+            {% endfor %}
+          </div>
+
+          <label
+            >เหตุผลที่ชอบใช้งาน (เลือกได้หลายข้อ)
+            <strong style="color: #c53030">*</strong></label
+          >
+          <div class="cols-2">
+            {% for r in appr_choices %}
+            <div class="checkbox-row">
+              <input
+                type="checkbox"
+                id="appr_{{loop.index}}"
+                name="AppReason"
+                value="{{r}}"
+                {% if result and result.echo.AppReason and r in result.echo.AppReason %}checked{% endif %}
+              />
+              <label for="appr_{{loop.index}}">{{r}}</label>
+            </div>
+            {% endfor %}
+          </div>
+        </fieldset>
+
+        <button class="btn" type="submit">ทำนายผลลัพธ์</button>
+      </form>
+    </div>
+
+    <script>
+      document
+        .getElementById("predictionForm")
+        .addEventListener("submit", function (e) {
+          const requiredFields = [
+            "Age",
+            "Gender",
+            "Jobs",
+            "DailyUsageHours",
+            "ActiveTimeClean",
+            "UsageYears",
+          ];
+
+          let isValid = true;
+          const alert = document.getElementById("alert");
+
+          requiredFields.forEach((field) => {
+            const element = document.querySelector(`[name="${field}"]`);
+            if (element) {
+              element.classList.remove("error");
+              if (!element.value || element.value.trim() === "") {
+                element.classList.add("error");
+                isValid = false;
+              }
+            }
+          });
+
+          const socialMediaReasons = document.querySelectorAll(
+            'input[name="SocialMediaReason"]:checked'
+          );
+          const appReasons = document.querySelectorAll(
+            'input[name="AppReason"]:checked'
+          );
+
+          if (socialMediaReasons.length === 0) {
+            isValid = false;
+          }
+
+          if (appReasons.length === 0) {
+            isValid = false;
+          }
+
+          if (!isValid) {
+            e.preventDefault();
+            alert.style.display = "block";
+            alert.scrollIntoView({ behavior: "smooth", block: "center" });
+
+            setTimeout(() => {
+              alert.style.display = "none";
+            }, 5000);
+          } else {
+            alert.style.display = "none";
+          }
+        });
+
+      document.querySelectorAll("input, select").forEach((element) => {
+        element.addEventListener("input", function () {
+          this.classList.remove("error");
+          document.getElementById("alert").style.display = "none";
+        });
+      });
+    </script>
+  </body>
+</html>
