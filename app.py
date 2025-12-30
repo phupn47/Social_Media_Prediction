@@ -7,7 +7,7 @@ import os
 app = Flask(__name__, template_folder="templates")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "favorite_app_model.joblib")
+MODEL_PATH = os.path.join(BASE_DIR, "fav_app_model.joblib")
 model = joblib.load(MODEL_PATH)
 
 JOBS = [
