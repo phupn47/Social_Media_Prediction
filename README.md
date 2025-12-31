@@ -54,12 +54,16 @@ Here are some interesting findings from our data analysis:
 - For users aged 30 and above, Facebook remains the primary application, accounting for **over 50%** of usage across all subgroups. This is likely due to established social connections with friends and family who are still active on this platform.
 - Among students and teenagers, **TikTok** is the most influential platform, followed closely by Instagram. This reflects a consumption behavior that values speed, entertainment, and personalized content.
 
+---
+
 ### 2. Peak Usage Times by Application
 
 ![Peak Usage Times by Application](2_peak_usage_time_heatmap.png)
 
 - **Nighttime is Prime Time:** The majority of respondents prefer using social media applications during the Night.
 - **Top Apps at Night:** During these late hours, **TikTok** has the highest number of active users, followed by **Instagram** and **YouTube**.
+
+---
 
 ### 3. Daily Usage Hours by Job
 
