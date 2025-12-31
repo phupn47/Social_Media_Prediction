@@ -77,7 +77,7 @@ Here are some interesting findings from our data analysis:
 
 We compared three machine learning models: **Logistic Regression**, **Random Forest**, and **XGBoost**.
 
-### Why Logistic Regression Won?
+### Why we use Logistic Regression?
 
 Although accuracy was similar across models, **Logistic Regression** was selected as the final model because:
 
